@@ -33,7 +33,7 @@ For example, if the agent is in state S and takes the "R" action, then there is 
 - The agent receives a reward of 0 for all other states.
 
 ### Graphical Representation
-![](1.png)
+![1](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/9a4eff4c-2b33-4ea0-bea6-9a880ca62559)
 
 
 ## POLICY ITERATION ALGORITHM
@@ -88,16 +88,19 @@ def policy_iteration(P, gamma=1.0, theta=1e-10):
 
 ## OUTPUT:
 ### Adversarial Policy and its probability success rate:
-![](5.PNG)
+![5](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/37c643f6-2904-4700-9a0d-4c3122535c2e)
 
-![](6.PNG)
+![6](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/ed2a4921-e10a-4db2-aa3d-00dcdc8768c2)
 
-![](4.PNG)
+![4](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/939faee7-cef6-4288-aa93-f6c45354274c)
+
+
 
 ### Optimal Policy with Gamma = 0.90 and its probability success rate:
-![](2.PNG)
 
-![](3.PNG)
+![2](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/cd3a02a3-5899-4d96-8a0c-45eaeea1267b)
+
+![3](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/c83ec40a-d4d2-4072-81e0-cd5a88f0e48a)
 
 ## RESULT:
 
