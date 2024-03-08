@@ -1,10 +1,9 @@
-# POLICY EVALUATION
+# POLICY ITERATION ALGORITHM
 
 ## AIM
-To develop a Python program to evaluate the given policy.
+To develop a Python program to find the optimal policy for the given MDP using the policy iteration algorithm.
 
 ## PROBLEM STATEMENT
-
 The bandit slippery walk problem is a reinforcement learning problem in which an agent must learn to navigate a 7-state environment in order to reach a goal state. The environment is slippery, so the agent has a chance of moving in the opposite direction of the action it takes.
 
 ### States
@@ -36,160 +35,70 @@ For example, if the agent is in state S and takes the "R" action, then there is 
 ### Graphical Representation
 ![](1.png)
 
-## POLICY EVALUATION FUNCTION
-![](2.PNG)
 
-## PROGRAM
+## POLICY ITERATION ALGORITHM
+The algorithm implemented in the policy_iteration is a method used to find the optimal policy in a Markov decision process (MDP). Here's a step-by-step explanation of the algorithm:
+
+1. Initialize the policy **pi**. In this implementation, a random action is chosen for each state s in the MDP **P**. The initial policy is represented by the lambda function **pi=lambda s:{s:a for s,a in enumerate(random_actions)}[s]**, where random_actions is a list of randomly chosen actions for each state.
+
+2. Enter a loop that continues until the policy pi is no longer changing. This is determined by comparing the previous policy **(old_pi)** with the current policy computed in the loop.
+
+3. Store the previous policy as **old_pi** for comparison later.
+
+4. Perform policy evaluation using the function **policy_evaluation**. This step calculates the state-values **(V)** for each state **s** given the current policy **pi**. The state-values represent the expected cumulative rewards starting from state **s** following policy **pi** and discounting future rewards by a factor of **gamma**. The function **policy_evaluation** is called with the arguments **pi**, **P**, **gamma**, and **theta**.
+
+5. Perform policy improvement using the function **policy_improvement**. This step updates the policy **pi** based on the current state-values **V**. The function **policy_improvement** is called with the arguments **V**, **P**, and **gamma**.
+
+6. Check if the policy has converged by comparing the previous policy **old_pi** with the current policy **{s:pi(s) for s in range(len(P))}**. If they are the same for all states **s**, the loop is exited.
+
+7. Return the final state-values **V** and the optimal policy **pi**.
+
+To summarize, policy iteration iteratively improves the policy by alternating between policy evaluation and policy improvement steps until convergence is reached. The algorithm guarantees to find the optimal policy for the given MDP **P** with a discount factor **gamma**.
+
+## POLICY IMPROVEMENT FUNCTION
 ```py
-#program developed by : Easwar J
-#register no: 212221230024
+#developed by : Kaushika A
+#register numeber: 212221230048
 ```
 
-### predefined environment and functions:
 ```py
-pip install git+https://github.com/mimoralea/gym-walk#egg=gym-walk
-
-import warnings ; warnings.filterwarnings('ignore')
-import gym, gym_walk
-import numpy as np
-import random
-import warnings
-
-warnings.filterwarnings('ignore', category=DeprecationWarning)
-np.set_printoptions(suppress=True)
-random.seed(123); np.random.seed(123)
-```
-
-```py
-def print_policy(pi, P, action_symbols=('<', 'v', '>', '^'), n_cols=4, title='Policy:'):
-    print(title)
-    arrs = {k:v for k,v in enumerate(action_symbols)}
+def policy_improvement(V, P, gamma=1.0):
+    Q = np.zeros((len(P), len(P[0])), dtype=np.float64)
     for s in range(len(P)):
-        a = pi(s)
-        print("| ", end="")
-        if np.all([done for action in P[s].values() for _, _, _, done in action]):
-            print("".rjust(9), end=" ")
-        else:
-            print(str(s).zfill(2), arrs[a].rjust(6), end=" ")
-        if (s + 1) % n_cols == 0: print("|")
-
-
-def print_state_value_function(V, P, n_cols=4, prec=3, title='State-value function:'):
-    print(title)
-    for s in range(len(P)):
-        v = V[s]
-        print("| ", end="")
-        if np.all([done for action in P[s].values() for _, _, _, done in action]):
-            print("".rjust(9), end=" ")
-        else:
-            print(str(s).zfill(2), '{}'.format(np.round(v, prec)).rjust(6), end=" ")
-        if (s + 1) % n_cols == 0: print("|")
-
-
-def probability_success(env, pi, goal_state, n_episodes=100, max_steps=200):
-    random.seed(123); np.random.seed(123) ; env.seed(123)
-    results = []
-    for _ in range(n_episodes):
-        state, done, steps = env.reset(), False, 0
-        while not done and steps < max_steps:
-            state, _, done, h = env.step(pi(state))
-            steps += 1
-        results.append(state == goal_state)
-    return np.sum(results)/len(results)
-
-
-def mean_return(env, pi, n_episodes=100, max_steps=200):
-    random.seed(123); np.random.seed(123) ; env.seed(123)
-    results = []
-    for _ in range(n_episodes):
-        state, done, steps = env.reset(), False, 0
-        results.append(0.0)
-        while not done and steps < max_steps:
-            state, reward, done, _ = env.step(pi(state))
-            results[-1] += reward
-            steps += 1
-    return np.mean(results)
-
-
-env = gym.make('SlipperyWalkFive-v0')
-P = env.env.P
-init_state = env.reset()
-goal_state = 6
-LEFT, RIGHT = range(2)
+        for a in range(len(P[s])):
+            for prob, next_state, reward, done in P[s][a]:
+                Q[s][a] += prob * (reward + gamma * V[next_state] * (not done))
+    new_pi = lambda s: {s: a for s, a in enumerate(np.argmax(Q, axis=1))}[s]
+    return new_pi
 ```
 
-### policy evaluation: 
+## POLICY ITERATION FUNCTION
 ```py
-def policy_evaluation(pi, P, gamma=1.0, theta=1e-10):
-    prev_V = np.zeros(len(P), dtype=np.float64)
+def policy_iteration(P, gamma=1.0, theta=1e-10):
+    random_actions = np.random.choice(tuple(P[0].keys()), len(P))
+    pi = lambda s:{s:a for s,a in enumerate(random_actions)}[s]
     while True:
-      V=np.zeros(len(P),dtype=np.float64)
-      for s in range(len(P)):
-        for prob, next_state, reward, done in P[s][pi(s)]:
-          V[s]+=prob*(reward+gamma*prev_V[next_state]*(not done))
-      if np.max(np.abs(prev_V-V))<theta:
+      old_pi = {s:pi(s) for s in range(len(P))}
+      V=policy_evaluation(pi,P,gamma,theta)
+      pi=policy_improvement(V,P,gamma)
+      if old_pi == {s:pi(s) for s in range(len(P))}:
         break
-      prev_V=V.copy()
-    return V
-
-# First Policy
-pi_1 = lambda s: {
-    0:LEFT, 1:LEFT, 2:LEFT, 3:LEFT, 4:LEFT, 5:LEFT, 6:LEFT
-}[s]
-print_policy(pi_1, P, action_symbols=('<', '>'), n_cols=7)
-
-# Second Policy
-pi_2 = lambda s: {
-    0:RIGHT, 1:RIGHT, 2:LEFT, 3:RIGHT, 4:LEFT, 5:RIGHT, 6:RIGHT
-}[s]
-print_policy(pi_2, P, action_symbols=('<', '>'), n_cols=7)
-```
-### policy comparison:
-```py 
-# Code to evaluate the first policy
-V1 = policy_evaluation(pi_1, P)
-print(V1)
-print_state_value_function(V1, P, n_cols=7, prec=5)
-
-# Code to evaluate the second policy
-V2 = policy_evaluation(pi_2, P)
-print(V2)
-print_state_value_function(V2, P, n_cols=7, prec=5)
-
-# Compare the two policies based on the value function using the above equation and find the best policy
-print(V1>=V2)
-if(np.sum(V1>=V2)==7):
-  print("The first policy is the better policy")
-elif(np.sum(V2>=V1)==7):
-  print("The second policy is the better policy")
-else:
-  print("Both policies have their merits.")
+    return V, pi
 ```
 
 ## OUTPUT:
-## <u> policy 1: </u>
-
-### policy
-![](3.PNG)
-
-### policy evaluation:
-![](7.PNG)
-
-### state value function:
+### Adversarial Policy and its probability success rate:
 ![](5.PNG)
 
-## <u> policy 2: </u>
-### policy
-![](4.PNG)
-
-### policy evaluation:
-![](8.PNG)
-
-### state value function:
 ![](6.PNG)
 
-## <u> policy comparison: </u> 
-![](9.PNG)
+![](4.PNG)
+
+### Optimal Policy with Gamma = 0.90 and its probability success rate:
+![](2.PNG)
+
+![](3.PNG)
 
 ## RESULT:
-Thus, a Python program is developed to evaluate the given policy.
+
+Thus, a Python program is developed to find the optimal policy for the given MDP using the policy iteration algorithm.
