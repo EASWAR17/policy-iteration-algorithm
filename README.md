@@ -100,7 +100,8 @@ def policy_iteration(P, gamma=1.0, theta=1e-10):
 
 ![2](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/cd3a02a3-5899-4d96-8a0c-45eaeea1267b)
 
-![3](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/c83ec40a-d4d2-4072-81e0-cd5a88f0e48a)
+![image](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/fa4e45a7-6b46-4cf7-87ce-08e1c974e5ce)
+
 
 ## RESULT:
 
