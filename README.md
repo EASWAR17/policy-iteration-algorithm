@@ -41,8 +41,8 @@ For example, if the agent is in state S and takes the "R" action, then there is 
 
 ## PROGRAM
 ```py
-#program developed by : Kaushika A
-#register no: 212221230048
+#program developed by : Easwar J
+#register no: 212221230024
 ```
 
 ### predefined environment and functions:
