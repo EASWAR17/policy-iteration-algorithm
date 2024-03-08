@@ -98,9 +98,8 @@ def policy_iteration(P, gamma=1.0, theta=1e-10):
 
 ### Optimal Policy with Gamma = 0.90 and its probability success rate:
 
-![2](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/cd3a02a3-5899-4d96-8a0c-45eaeea1267b)
-
 ![image](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/fa4e45a7-6b46-4cf7-87ce-08e1c974e5ce)
+![3](https://github.com/EASWAR17/policy-iteration-algorithm/assets/94154683/eb2ea9f3-23d0-402f-907f-9428a2472fb5)
 
 
 ## RESULT:
